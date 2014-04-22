@@ -1,0 +1,208 @@
+<div class="olap-box">
+    <script>
+        OLAP={};
+        OLAP.window=1;
+    </script>
+    <div id="CodeStyle">
+        <style>.cs{display:none;}</style>
+    </div>
+    <div id="testDate"></div>
+
+    <form id="formExcel" action="/faostat.olap.ws/rest/ExcelCreator" method="post" >
+        <input type="hidden" id="excelData" name="data" value="">
+        <input type="hidden" name="type" value="xls">
+    </form>
+    <div id="olapGenConf" style="display:inline">
+        <table border=1 style="display:none">
+            <tbody>
+            <tr>
+                <td> <input type="checkbox" id="showCode"   onChange="javascript:showCode()">
+                    <label>show Code</label>
+                </td>
+                <td id="showNul">
+                </td>
+                <td>
+                    <!--input type="checkbox" id="showAgregate" checked="checked"  onChange="javascript:showAggregate()"/>
+                    <label>show Aggregation</label-->
+                </td>
+                <td>
+                </td>
+            </tr>
+            <tr>
+                <td id="NumType"  style="vertical-align:top">Number of Decimal: <br />
+                    <select id="nbDec">
+                        <option>0</option>
+                        <option>1</option>
+                        <option selected>2</option>
+                        <option>3</option>
+                        <option>4</option>
+                    </select>
+                </td>
+                <td  style="vertical-align:top">
+                    <div id="olapconf" style="float:left;clear:both">
+                    </div>
+                </td>
+                <td  style="vertical-align:top"></td>
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+    <div id="tree"></div>
+
+    <form id="MainForm"><div id="ODC"></div></form>
+    <div id="drag-selectors">
+
+	<!-- TODO: make multilingual -->
+	<div id='drag-tip' class="drag-tip">
+		<div id='drag-tip-text' class="drag-tip-text">
+			DRAG AND DROP
+			ELEMENTS TO CHANGE
+			TABLE LAYOUT
+		</div>
+	</div>        
+
+        <fieldset id="FODC2" class="visi">
+            <legend onclick="javascript:changeVisi('ODC2')"
+                    style="cursor:pointer;font-weight:bold;" class="invi">OLAP Dimension Configuration</legend>
+            <fieldset id="Foptions" class="visi">
+                <legend  onclick="javascript:changeVisi('pivot_options')"
+                         style="cursor:pointer;font-weight:bold;">Options</legend>
+                <div id="pivot_options" class="visi">Aggregate function:<br/>
+                    <select id="pivot_agg"><option value=1>SUM</option></select>
+                    <br/>Subtotals aggregate functions:<br/>
+                    <select id="pivot_agg_totals"></select>
+                    <br/>
+                    <textarea id=test cols="50" rows=7 style="display:none;"></textarea>
+                    <div id="param"></div>
+                </div>
+            </fieldset>
+            <fieldset id="FAggregate" class="visi">
+                <legend onclick="javascript:changeVisi('pivot_page')"
+                        style="cursor:pointer;font-weight:bold;">
+                    Aggregated dimensions</legend>
+                <div id="pivot_page" class="visi">
+                </div>
+            </fieldset>
+        </fieldset>
+        <div id="DimRowCol">
+            <div id="ODC_ROWS">
+		<div class="nested-checkbox">	
+                    <br/>
+		<input type="checkbox" id="shownestedby"   onChange="javascript:changeNestedBy()" checked/>
+			<label id="tradolapalone1">
+			    <script>
+				document.getElementById("tradolapalone1").innerHTML=traduction['nested_by'][lang];
+			    </script>
+			</label>
+		</div>
+                <div id="tradolapalone2">
+                    <script>
+                        document.getElementById("tradolapalone2").innerHTML=traduction['Rows'][lang];
+                    </script>
+			
+                </div>
+		
+                <div>
+                    <div id="ODC_NESTED">
+                        <div id="tradolapalone3">
+                            <script>
+                                //document.write(traduction['nested_by'][lang]);
+                                document.getElementById("tradolapalone3").innerHTML=traduction['nested_by'][lang];
+                            </script>
+                        </div>
+                        <div id="ODC2_NESTED"></div>
+                    </div>
+                    <div id="ODC_ROW">
+                        <div id="legendrow">
+                            <script>
+                                //    document.write(traduction['other_rows'][lang]);
+                                document.getElementById("legendrow").innerHTML=traduction['other_rows'][lang];
+                            </script>
+                        </div>
+                        <div id="ODC2_ROW">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="ODC_COL">
+                <div id="tradolapalone4">
+                    <script>
+                        document.getElementById("tradolapalone4").innerHTML=traduction['Cols'][lang];
+
+                        // document.write(traduction['Cols'][lang]);
+                    </script>
+                </div>
+                <div id="ODC2_COL">
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <table>
+        <tr>
+            <td colspan=2>
+                <fieldset id="FOLAP" class="invi">
+                   
+
+			<div class="subtitle">
+					<!--  fullscreen button -->
+				       <a class="various btn" id="btnFS" data-fancybox-type="iframe" href="/faostat-download-js/popupOlap.jsp" target="myFanzy">
+						<div class="btn-fullscreen-icon btnLeftIcon"></div>
+						<div class='btnText'>Full screen</div>
+					</a>
+				    
+			</div>
+
+		 <div class='clear'></div>
+
+
+                    <div id="pivot_content" class="visi pivot-table" ></div>
+ <legend  onclick="javascript:changeVisi('pivot_content')"
+                             style="cursor:pointer;font-weight:bold;">&nbsp;</legend>
+                </fieldset>
+            </td>
+        </tr>
+    </table>
+
+    <div id="myFlags"></div>
+    <div id="METADATA" style="display:none;width:100%;float: left; padding: 10px;">META</div>
+    <div id="pivot_chart" style="display:none"></div>
+    <fieldset id="FgraphOption" class="invi">
+        <legend onclick="javascript:changeVisi('graphtypeD')"
+                style="cursor:pointer;font-weight:bold;">Graph options</legend>
+        <div id="graphtypeD" class="visi">Graph type:
+            <select id="graph_typeF" onchange="javascript:reinitgraph()">
+                <option value=1>basic column</option>
+                <option value=3>stacked column</option>
+                <option value=4>stacked column percent</option>
+                <option value=5>area line</option>
+            </select>
+        </div>
+    </fieldset>
+    <!--iframe name="c1" id="c1" width="100%" src="" frameborder=0></iframe-->
+    <form method="POST" action="http://fenixapps.fao.org/charts/api" target="c1" id="c1_form">
+        <input type="hidden" name="out" value="html" />
+        <input type="hidden" name="engine" value="highcharts" />
+        <input type="hidden" id="c1_chart" name="chart" value="renderto:container;type:column" />
+        <input type="hidden" name="title" value="text:CHART" />
+        <input type="hidden" id="c1_xaxis" name="xaxis" value="categories:" />
+        <input type="hidden" name="yaxis" value="allowdecimals:false;min:0;" />
+        <input type="hidden" id="c1_plotoptions" name="plotoptions" value="" />
+        <input type="hidden" id="c1_series" name="series"  />
+    </form>
+
+    <div id="chart2"></div>
+</div>
+
+<!-- show/hide the drag and drop section -->
+<!-- script>
+     $("#testinline").hover(function () {
+                     $('#drag-tip').show();
+ 		     $('#drag-tip-text').show();
+      }, function () {
+                      $('#drag-tip').hide();
+		      $('#drag-tip-text').hide();
+      });
+</script>-->
